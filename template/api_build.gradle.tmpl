@@ -1,0 +1,21 @@
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+apply from: "grpc.gradle"
+archivesBaseName = 'api'
+
+dependencies {
+
+    // For jdk 9+ you need to include javax.annotations
+    // The reason is outlined in this grpc issue
+    // https://github.com/grpc/grpc-java/issues/4725
+    compileOnly group: "javax.annotation", name: "javax.annotation-api", version: "1.2"
+
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8"
+    implementation group: "org.jetbrains.kotlinx", name: "kotlinx-coroutines-core", version: "$coroutines_version"
+    implementation group: "com.github.marcoferrer.krotoplus", name: "kroto-plus-coroutines", version: "$krotoplus_version"
+
+    implementation group: "io.grpc", name: "grpc-stub", version: "$grpc_version"
+    implementation group: "io.grpc", name: "grpc-protobuf", version: "$grpc_version"
+    implementation group: "com.google.protobuf", name: "protobuf-java", version: "$protobuf_version"
+}
+

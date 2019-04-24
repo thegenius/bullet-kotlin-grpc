@@ -1,0 +1,28 @@
+package {{context.group}}.{{context.project}}
+
+import io.kotlintest.specs.AnnotationSpec
+import {{context.group}}.{{context.project}}.api.apiModule
+import {{context.group}}.{{context.project}}.dal.DataSourcePool
+import {{context.group}}.{{context.project}}.dal.JooqContext.buildJooqContext
+import {{context.group}}.{{context.project}}.dal.dalModule
+import {{context.group}}.{{context.project}}.ext.extModule
+import org.jooq.SQLDialect
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
+import org.koin.test.KoinTest
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+abstract class KoinTestRunner: AnnotationSpec(), KoinTest {
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(KoinTestRunner::class.java)
+    }
+
+    init {
+        buildJooqContext(DataSourcePool.getH2DataSource(), SQLDialect.MYSQL_5_7)
+        stopKoin()
+        startKoin {
+            modules(apiModule, dalModule, extModule)
+        }
+    }
+}

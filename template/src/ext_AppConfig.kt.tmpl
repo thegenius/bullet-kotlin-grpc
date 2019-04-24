@@ -1,0 +1,36 @@
+package {{context.group}}.{{context.project}}.ext
+
+import java.util.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.io.FileInputStream
+import org.jooq.tools.StringUtils
+
+data class AppConfig(
+    val centerId: Int,
+    val machineId: Int
+)
+
+class AppConfigLoader {
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(AppConfigLoader::class.java)
+        lateinit var instance: AppConfig
+
+        init {
+            load().map { instance = it }
+        }
+
+        private fun load(): Optional<AppConfig> {
+            val config = System.getenv("APP_CONFIG_YAML")
+            val inputStream = if (!StringUtils.isBlank(config)) {
+                log.info("use env APP_CONFIG_YAML: {}", config)
+                FileInputStream(config)
+            } else {
+                log.info("use jar resource application.yaml")
+                ClassLoader.getSystemClassLoader().getResourceAsStream("application.yaml")
+            }
+            val configContent = inputStream.bufferedReader().use { it.readText() }
+            return YamlUtil.toObject(configContent, AppConfig::class.java)
+        }
+    }
+}

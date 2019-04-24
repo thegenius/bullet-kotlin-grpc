@@ -1,0 +1,14 @@
+package {{context.group}}.{{context.project}}.ext
+
+import org.koin.core.get
+import org.koin.dsl.module
+import org.koin.core.KoinComponent
+import {{context.group}}.{{context.project}}.ext.impl.IdGeneratorImpl
+
+object ExtModule : KoinComponent {
+    val idGenerator: IdGenerator = get()
+}
+
+val extModule = module {
+    single<IdGenerator> { IdGeneratorImpl(AppConfigLoader.instance.centerId, AppConfigLoader.instance.machineId) }
+}

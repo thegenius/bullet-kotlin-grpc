@@ -1,0 +1,34 @@
+package {{context.group}}.{{context.project}}.ext
+
+import java.util.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+
+class YamlUtil {
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(YamlUtil::class.java)
+        private val mapper = ObjectMapper(YAMLFactory())
+
+        init {
+            mapper.registerModule(KotlinModule())
+        }
+
+        @JvmStatic
+        fun <T> toObject(content: String, tClass: Class<T>): Optional<T> {
+            return try {
+                Optional.of(mapper.readValue(content, tClass))
+            } catch (ex: Exception) {
+                log.error("toObject: {} - error: {}", content, ex)
+                Optional.empty()
+            }
+        }
+
+        @JvmStatic
+        fun<T> toYaml(obj: T): String {
+            return mapper.writeValueAsString(obj)
+        }
+    }
+}

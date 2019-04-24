@@ -1,0 +1,23 @@
+package {{context.group}}.{{context.project}}.dal
+
+import org.koin.core.get
+import org.koin.dsl.module
+import org.jooq.DSLContext
+import org.jooq.Configuration
+import org.koin.core.KoinComponent
+import {{context.group}}.{{context.project}}.dal.impl.EntityBasicInfoRepositoryImpl
+import {{context.group}}.{{context.project}}.dal.generated.tables.daos.EntityBasicInfoDao
+
+object DalModule : KoinComponent {
+    val context: DSLContext = get()
+    val configuration: Configuration = get()
+    val entityBasicInfoDao: EntityBasicInfoDao = get()
+    val entityBasicInfoRepository: EntityBasicInfoRepository = get()
+}
+
+val dalModule = module {
+    single<DSLContext> { JooqContext.getDSLContext() }
+    single<Configuration> { JooqContext.getConfiguration() }
+    single<EntityBasicInfoDao> { EntityBasicInfoDao(get()) }
+    single<EntityBasicInfoRepository> { EntityBasicInfoRepositoryImpl(get()) }
+}

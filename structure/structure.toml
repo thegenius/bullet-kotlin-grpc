@@ -1,0 +1,65 @@
+project_structure = [
+    # api.grpc
+    {item_path = "{{ context.project }}.api.src.main.proto", item_file = "helloworld.proto",                          item_tmpl = "api_helloworld.proto.tmpl",                      item_type = "static"},
+    {item_path = "{{ context.project }}.api",                item_file = "build.gradle",                              item_tmpl = "api_build.gradle.tmpl",                              item_type = "static"},
+    {item_path = "{{ context.project }}.api",                item_file = "grpc.gradle",                               item_tmpl = "api_grpc.gradle.tmpl",                               item_type = "static"},
+    {item_path = "{{ context.project }}.api",                item_file = "grpc-gen-coroutines.bat",                   item_tmpl = "api_grpc-gen-coroutines.bat.tmpl",              item_type = "static"},
+    {item_path = "{{ context.project }}.api",                item_file = "protoc-gen-grpc-coroutines-0.3.0-jvm8.jar", item_tmpl = "protoc-gen-grpc-coroutines-0.3.0-jvm8.jar", item_type = "static"},
+
+    # # env
+    {item_path = "{{ context.project }}.env.database.src.main.java.{{context.group}}.{{context.project}}.dal",  item_file = "DataSourceConfig.java",            item_tmpl = "env_database_DataSourceConfig.java.tmpl",       item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.java.{{context.group}}.{{context.project}}.dal",  item_file = "DataSourceConfigLoader.java", item_tmpl = "env_database_DataSourceConfigLoader.java.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.java.{{context.group}}.{{context.project}}.dal",  item_file = "DataSourcePool.java",         item_tmpl = "env_database_DataSourcePool.java.tmpl",         item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.java.{{context.group}}.{{context.project}}.dal",  item_file = "JooqContext.java",                 item_tmpl = "env_database_JooqContext.java.tmpl",            item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.java.{{context.group}}.{{context.project}}.dal",  item_file = "ResourceLoader.java",              item_tmpl = "env_database_ResourceLoader.java.tmpl",         item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.resources.db.migration",                          item_file = "V1__create_basic_info.sql",        item_tmpl = "env_database_V1__create_basic_info.sql.tmpl",   item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.resources",                                       item_file = "database-mysql-local.yaml",                 item_tmpl = "env_database_database-mysql-local.yaml.tmpl",            item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.test.java.{{context.group}}.{{context.project}}.dal",  item_file = "DataSourcePoolTest.java",          item_tmpl = "env_database_DataSourcePoolTest.java.tmpl",     item_type = "static"},
+
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated.tables.daos",    item_file = "EntityBasicInfoDao.java",    item_tmpl = "env_database_EntityBasicInfoDao.java.tmpl",    item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated.tables.pojos",   item_file = "EntityBasicInfo.java",       item_tmpl = "env_database_pojo_EntityBasicInfo.java.tmpl",  item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated.tables.records", item_file = "EntityBasicInfoRecord.java", item_tmpl = "env_database_EntityBasicInfoRecord.java.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated.tables",         item_file = "EntityBasicInfo.java",       item_tmpl = "env_database_EntityBasicInfo.java.tmpl",       item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated",                item_file = "DefaultCatalog.java",        item_tmpl = "env_database_DefaultCatalog.java.tmpl",        item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated",                item_file = "DefaultSchema.java",         item_tmpl = "env_database_DefaultSchema.java.tmpl",         item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated",                item_file = "Indexes.java",               item_tmpl = "env_database_Indexes.java.tmpl",                item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated",                item_file = "Keys.java",                  item_tmpl = "env_database_Keys.java.tmpl",                  item_type = "static"},
+    {item_path = "{{ context.project }}.env.database.src.main.jooq.{{context.group}}.{{context.project}}.dal.generated",                item_file = "Tables.java",                item_tmpl = "env_database_Tables.java.tmpl",                item_type = "static"},
+
+    {item_path = "{{ context.project }}.env.database",    item_file = "build.gradle",                                 item_tmpl = "env_database_build.gradle.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.env.database",    item_file = "jooq.gradle",                                  item_tmpl = "env_database_jooq.gradle.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.env",             item_file = "build.gradle",                                 item_tmpl = "env_build.gradle.tmpl", item_type = "static"},
+
+
+    # # src
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.api.impl", item_file = "GreeterServiceImpl.kt",            item_tmpl = "api_GreeterServiceImpl.kt.tmpl",            item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.api",      item_file = "ApiModule.kt",                     item_tmpl = "api_ApiModule.kt.tmpl",                     item_type = "static"},
+    
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.dal.impl", item_file = "EntityBasicInfoRepositoryImpl.kt", item_tmpl = "dal_EntityBasicInfoRepositoryImpl.kt.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.dal",      item_file = "DalModule.kt",                     item_tmpl = "dal_DalModule.kt.tmpl",                     item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.dal",      item_file = "EntityBasicInfoRepository.kt",     item_tmpl = "dal_EntityBasicInfoRepository.kt.tmpl",     item_type = "static"},
+
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext.impl", item_file = "IdGeneratorImpl.kt",               item_tmpl = "ext_IdGeneratorImpl.kt.tmpl",  item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "AppConfig.kt",                     item_tmpl = "ext_AppConfig.kt.tmpl",        item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "DateTimeWithZone.kt",              item_tmpl = "ext_DateTimeWithZone.kt.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "ExtModule.kt",                     item_tmpl = "ext_ExtModule.kt.tmpl",        item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "IdGenerator.kt",                   item_tmpl = "ext_IdGenerator.kt.tmpl",      item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "JsonUtil.kt",                      item_tmpl = "ext_JsonUtil.kt.tmpl",         item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "SnowFlake.kt",                     item_tmpl = "ext_SnowFlake.kt.tmpl",        item_type = "static"},
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "YamlUtil.kt",                      item_tmpl = "ext_YamlUtil.kt.tmpl",         item_type = "static"},
+    
+    {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}",          item_file = "main.kt",                          item_tmpl = "main.kt.tmpl",                 item_type = "static"},
+    {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}",          item_file = "KoinTestRunner.kt",                item_tmpl = "KoinTestRunner.kt.tmpl",       item_type = "static"},
+    
+ 
+    # root
+    {item_path = "{{ context.project }}.gradle.wrapper",    item_file = "gradle-wrapper.properties",            item_tmpl = "gradle-wrapper.properties.tmpl",             item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = ".gitignore",            item_tmpl = ".gitignore",             item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "build.gradle",          item_tmpl = "build.gradle.tmpl",      item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "gradle.properties",     item_tmpl = "gradle.properties.tmpl", item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "gradlew",               item_tmpl = "gradlew.tmpl",           item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "gradlew.bat",           item_tmpl = "gradlew.bat.tmpl",       item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "README.md",             item_tmpl = "README.md.tmpl",         item_type = "static"},
+    {item_path = "{{ context.project }}",    item_file = "settings.gradle",       item_tmpl = "settings.gradle.tmpl",   item_type = "static"},
+
+]

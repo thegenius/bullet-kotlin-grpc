@@ -1,0 +1,14 @@
+package {{context.group}}.{{context.project}}.ext.impl
+
+import {{context.group}}.{{context.project}}.ext.SnowFlake
+import {{context.group}}.{{context.project}}.ext.IdGenerator
+
+class IdGeneratorImpl(
+    centerId: Int,
+    machineId: Int
+) : IdGenerator {
+    private val snowFlake: SnowFlake = SnowFlake(centerId.toLong(), machineId.toLong())
+    override fun nextId(): Long {
+        return snowFlake.nextId()
+    }
+}

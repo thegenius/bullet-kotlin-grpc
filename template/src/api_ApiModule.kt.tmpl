@@ -1,0 +1,15 @@
+package {{context.group}}.{{context.project}}.api
+
+import org.koin.dsl.module
+import {{context.group}}.{{context.project}}.api.impl.GreeterServiceImpl
+import io.grpc.examples.helloworld.GreeterCoroutineGrpc
+import org.koin.core.KoinComponent
+import org.koin.core.get
+
+object ApiModule: KoinComponent {
+    val greeterService: GreeterCoroutineGrpc.GreeterImplBase = get()
+}
+
+val apiModule = module {
+    single<GreeterCoroutineGrpc.GreeterImplBase> { GreeterServiceImpl() }
+}

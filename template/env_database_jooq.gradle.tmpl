@@ -1,0 +1,46 @@
+jooq {
+    version = '3.11.2'
+    edition = 'OSS'
+
+    jooq(sourceSets.main) {
+        jdbc {
+            driver = "${db.driver}"
+            url = "${db.url}"
+            username = "${db.username}"
+            password = "${db.password}"
+        }
+        generator {
+            name = 'org.jooq.codegen.DefaultGenerator'
+            target {
+                directory = "src/main/jooq"
+                packageName = "${rootProject.group}.${rootProject.name}.dal.generated"
+            }
+            strategy {
+                name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+            }
+            database {
+                inputSchema = "${db.database}"
+                outputSchemaToDefault = true
+                excludes = "flyway_schema_history"
+            }
+            // table must have primary key
+            // if table does not have primary key, the generated record will not be updatable
+            // record without updatable ability does not have store function
+            generate {
+                daos = true
+                jpaAnnotations = false
+                springAnnotations = false
+                pojosEqualsAndHashCode = true
+                javaTimeTypes = true
+            }
+        }
+    }
+}
+
+dependencies {
+    jooqRuntime("com.h2database:h2:${h2Version}")
+    jooqRuntime("mysql:mysql-connector-java:${mysqlConnectorVersion}")
+}
+
+// disable the generate phase when upload
+generateJooqJooqSchemaSource.setEnabled(false)

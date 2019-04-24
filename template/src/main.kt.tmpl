@@ -1,0 +1,27 @@
+import io.grpc.Server
+import org.koin.core.context.startKoin
+import io.grpc.netty.NettyServerBuilder
+import {{context.group}}.{{context.project}}.api.apiModule
+import {{context.group}}.{{context.project}}.dal.dalModule
+import {{context.group}}.{{context.project}}.ext.extModule
+import {{context.group}}.{{context.project}}.api.ApiModule
+import {{context.group}}.{{context.project}}.dal.DataSourcePool
+import {{context.group}}.{{context.project}}.dal.JooqContext.buildJooqContext
+import org.jooq.SQLDialect
+
+
+fun main() {
+    startKoin {
+        modules(apiModule, dalModule, extModule)
+    }
+    buildJooqContext(DataSourcePool.getMysqlDefaultDataSource(), SQLDialect.MYSQL_5_7)
+
+    val server: Server = NettyServerBuilder
+        .forPort(19998)
+        .addService(ApiModule.greeterService)
+        .directExecutor()
+        .build()
+        .start()
+    server.awaitTermination()
+}
+

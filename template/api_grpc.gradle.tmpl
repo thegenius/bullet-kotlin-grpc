@@ -1,0 +1,36 @@
+apply plugin: 'com.google.protobuf'
+
+static def isWindows() {
+    return org.gradle.internal.os.OperatingSystem.current().isWindows()
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:$protobuf_version"
+    }
+
+    //noinspection GroovyAssignabilityCheck
+    plugins {
+        grpc { artifact = "io.grpc:protoc-gen-grpc-java:$grpc_version" }
+        if(isWindows()) {
+            print "windows system, generate coroutines by bat script!"
+            coroutines {
+                path = project.file("grpc-gen-coroutines.bat").absolutePath
+            }
+        } else {
+            coroutines {
+                artifact = "com.github.marcoferrer.krotoplus:protoc-gen-grpc-coroutines:$krotoplus_version:jvm8@jar"
+            }
+        }
+    }
+
+    generateProtoTasks {
+        all().each{ task ->
+            task.plugins {
+                grpc {}
+                coroutines {}
+            }
+        }
+    }
+}
+

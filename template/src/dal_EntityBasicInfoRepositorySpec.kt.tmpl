@@ -1,0 +1,56 @@
+package {{context.group}}.{{context.project}}.dal
+
+import {{context.group}}.{{context.project}}.KoinTestRunner
+import {{context.group}}.{{context.project}}.dal.generated.tables.daos.EntityBasicInfoDao
+import {{context.group}}.{{context.project}}.dal.generated.tables.pojos.EntityBasicInfo
+import {{context.group}}.{{context.project}}.ext.DateTimeWithZone
+import {{context.group}}.{{context.project}}.ext.IdGenerator
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.AnnotationSpec
+import org.koin.core.KoinComponent
+
+import org.koin.core.context.startKoin
+import org.koin.test.inject
+import org.koin.core.context.stopKoin
+import org.koin.core.inject
+import org.slf4j.LoggerFactory
+
+class EntityBasicInfoRepositorySpec : KoinTestRunner() {
+    private val entityBasicInfoDao: EntityBasicInfoDao by inject()
+    private val entityBasicInfoRepository: EntityBasicInfoRepository by inject()
+    private val idGenerator: IdGenerator by inject()
+
+    @Test
+    fun test() {
+        val id = idGenerator.nextId()
+        entityBasicInfoDao.deleteById(id)
+        val now = DateTimeWithZone.now()
+        val basicInfoInput = EntityBasicInfo()
+        basicInfoInput.setId(id)
+        basicInfoInput.setEntityId(id)
+        basicInfoInput.setNickname("nick")
+        basicInfoInput.setIdentityCardNo("card-no")
+        basicInfoInput.setIdentityCardNation("card-nation")
+        basicInfoInput.setFirstName("first name")
+        basicInfoInput.setMiddleName("middle name")
+        basicInfoInput.setLastName("last name")
+        basicInfoInput.setIsTest(0)
+        basicInfoInput.setIsDeleted(0)
+        basicInfoInput.setCreateZone(now.timeOffsetMillis)
+        basicInfoInput.setUpdateZone(now.timeOffsetMillis)
+        basicInfoInput.setCreateTime(now.timeMillis)
+        basicInfoInput.setUpdateTime(now.timeMillis)
+        basicInfoInput.setCreateBy(0L)
+        basicInfoInput.setUpdateBy(0L)
+        basicInfoInput.setVersion(0)
+
+        entityBasicInfoDao.insert(basicInfoInput)
+
+        val basicInfoOutput = entityBasicInfoRepository.fetchOneById(id)
+
+        entityBasicInfoDao.deleteById(id)
+
+        basicInfoInput shouldBe basicInfoOutput
+    }
+
+}

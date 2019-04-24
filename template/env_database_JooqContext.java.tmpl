@@ -1,0 +1,31 @@
+package {{context.group}}.{{context.project}}.dal;
+
+import org.jooq.*;
+import org.jooq.impl.DSL;
+
+import javax.sql.DataSource;
+
+public class JooqContext {
+
+    private volatile static DSLContext instance;
+
+    public static void buildJooqContext(DataSource dataSource, SQLDialect dialect) {
+        if (instance != null) {
+            return;
+        }
+
+        synchronized (JooqContext.class) {
+            if (instance == null) {
+                instance = DSL.using(dataSource, dialect);
+            }
+        }
+    }
+
+    public static DSLContext getDSLContext() {
+        return instance;
+    }
+
+    public static Configuration getConfiguration() {
+        return instance.configuration();
+    }
+}

@@ -1,0 +1,81 @@
+package {{context.group}}.{{context.project}}.api
+
+import {{context.group}}.{{context.project}}.KoinTestRunner
+import com.github.marcoferrer.krotoplus.coroutines.withCoroutineContext
+import io.grpc.Channel
+import io.grpc.examples.helloworld.GreeterCoroutineGrpc
+import io.grpc.inprocess.InProcessChannelBuilder
+import io.grpc.inprocess.InProcessServerBuilder
+import io.kotlintest.shouldBe
+import kotlinx.coroutines.channels.consumeEach
+import io.grpc.examples.helloworld.send
+import io.kotlintest.specs.AbstractAnnotationSpec
+
+
+class GreeterServiceSpec : KoinTestRunner() {
+    lateinit var channel: Channel
+
+    @BeforeClass
+    fun setup() {
+        InProcessServerBuilder
+            .forName("helloworld")
+            .addService(ApiModule.greeterService)
+            .directExecutor()
+            .build()
+            .start()
+        channel = InProcessChannelBuilder
+            .forName("helloworld")
+            .directExecutor()
+            .build()
+    }
+
+
+    @Test
+    suspend fun testSayHello() {
+        val stub = GreeterCoroutineGrpc.newStub(channel).withCoroutineContext()
+        var unaryResponse = stub.sayHello { name = "John" }
+        unaryResponse.message shouldBe "Hello there, John!"
+
+        unaryResponse = stub.sayHello { name = "test" }
+        unaryResponse.message shouldBe "Hello there, test!"
+    }
+
+
+    @Suppress("unused")
+    @Test
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    suspend fun testStreaming() {
+        val stub = GreeterCoroutineGrpc.newStub(channel).withCoroutineContext()
+        val (requestChannel, responseChannel) = stub.sayHelloStreaming()
+
+        requestChannel.send { name = "John" }
+        requestChannel.send { name = "Smith" }
+        requestChannel.send { name = "Mark" }
+        requestChannel.close()
+        var result = ""
+        responseChannel.consumeEach { result += it.message }
+        result shouldBe "Hello there, John!Hello there, Smith!Hello there, Mark!"
+    }
+
+    @Suppress("unused")
+    @Test
+    @kotlinx.coroutines.ObsoleteCoroutinesApi
+    suspend fun testServerStreaming() {
+        val stub = GreeterCoroutineGrpc.newStub(channel).withCoroutineContext()
+        val responseChannel = stub.sayHelloServerStreaming { name = "12345" }
+        var result = ""
+        responseChannel.consumeEach { result += it.message }
+        result shouldBe "Hello 1!Hello 2!Hello 3!Hello 4!Hello 5!"
+    }
+
+    @Suppress("unused")
+    @AbstractAnnotationSpec.Test
+    suspend fun testClientStreaming() {
+        val stub = GreeterCoroutineGrpc.newStub(channel).withCoroutineContext()
+        val (requestChannel, response) = stub.sayHelloClientStreaming()
+        requestChannel.send { name = "client-1" }
+        requestChannel.send { name = "client-2" }
+        requestChannel.close()
+        response.await().message shouldBe "client-1|client-2"
+    }
+}

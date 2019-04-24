@@ -1,0 +1,64 @@
+buildscript {
+    ext {
+        mysqlDatabase = [
+                type    : "MySQL",
+                host    : 'localhost',
+                port    : '3306',
+                database: "new_match",
+                username: 'root',
+                password: 'qwertypoiuy123',
+                driver  : "com.mysql.cj.jdbc.Driver",
+                url     : "jdbc:mysql://localhost:3306/new_match?useSSL=false&serverTimezone=UTC",
+        ]
+
+        // h2 configuration for build
+        h2Database = [
+                type    : 'h2',
+                subtype : 'mem',
+                host    : '',
+                port    : '',
+                database: 'PUBLIC',
+                username: 'root',
+                password: '123456',
+                driver  : "org.h2.Driver",
+                url     : "jdbc:h2:file:${rootDir}/.h2/test;"
+        ]
+        db = mysqlDatabase
+    }
+
+    dependencies {
+        classpath group: "com.h2database", name:"h2", version:"${h2Version}"
+        classpath group: "mysql", name: "mysql-connector-java", version: "${mysqlConnectorVersion}"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'nu.studer.jooq' version '3.0.2'
+    id 'org.flywaydb.flyway' version '5.2.4'
+}
+
+archivesBaseName = 'database'
+apply from: 'jooq.gradle'
+
+flyway {
+    url = "${db.url}"
+    println("flyway database url: ${db.url}")
+    user = "${db.username}"
+    password = "${db.password}"
+}
+
+dependencies {
+    testImplementation group: "junit", name: "junit", version: "$junit_version"
+    compile group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "$jackson_version"
+    compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "$jackson_version"
+    compile group: "com.fasterxml.jackson.module", name: "jackson-module-kotlin", version: "$jackson_version"
+
+    compile group: 'org.jooq', name: 'jooq', version: "$jooq_version"
+    compile group: 'org.jooq', name: 'jooq-meta', version: "$jooq_version"
+    compile group: 'org.jooq', name: 'jooq-codegen', version: "$jooq_version"
+    compile group: 'com.zaxxer', name: 'HikariCP', version: "$hikari_version"
+    runtime group: "mysql", name: "mysql-connector-java", version: "$mysql_connector_version"
+}
+
+

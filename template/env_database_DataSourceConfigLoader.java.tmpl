@@ -1,0 +1,52 @@
+package {{context.group}}.{{context.project}}.dal;
+
+import java.io.FileInputStream;
+import java.util.Optional;
+import java.io.InputStream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.jooq.tools.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DataSourceConfigLoader {
+
+    private static Logger log = LoggerFactory.getLogger(DataSourceConfigLoader.class);
+
+    private static ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+
+    private static Optional<DataSourceConfig> buildDataSourceConfig(InputStream inputStream) {
+        try {
+            byte[] bytes = new byte[inputStream.available()];
+            int cnt = inputStream.read(bytes);
+            if (cnt <= 0) {
+                return Optional.empty();
+            }
+            String configContent = new String(bytes);
+            DataSourceConfig config = yamlMapper.readValue(configContent, DataSourceConfig.class);
+            return Optional.of(config);
+        } catch (Exception ex) {
+            log.error("getDataSourceConfig error: {}", ex);
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<DataSourceConfig> getDataSourceConfig(String filename) {
+        InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(filename);
+        return buildDataSourceConfig(inputStream);
+    }
+
+    public static Optional<DataSourceConfig> getMysqlDefaultDataSourceConfig() {
+        try {
+            String config = System.getenv("APP_MYSQL_YAML");
+            if (!StringUtils.isBlank(config)) {
+                log.info("use env APP_MYSQL_YAML: {}", config);
+                InputStream in = new FileInputStream(config);
+                return buildDataSourceConfig(in);
+            }
+            return getDataSourceConfig("database-mysql-local.yaml");
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
+    }
+}

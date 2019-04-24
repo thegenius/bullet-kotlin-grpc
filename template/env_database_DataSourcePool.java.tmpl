@@ -1,0 +1,149 @@
+package {{context.group}}.{{context.project}}.dal;
+
+import java.io.File;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import javax.sql.DataSource;
+import javax.xml.crypto.Data;
+
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+import org.jooq.tools.StringUtils;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DataSourcePool {
+    private static Logger log = LoggerFactory.getLogger(DataSourcePool.class);
+
+    private volatile static DataSource h2Instance;
+
+    private volatile static DataSource mySqlInstance;
+
+    private static String buildMysqlUrl(String host, String port, String database, String extra) {
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
+        if (!StringUtils.isBlank(extra)) {
+            url += "?" + extra;
+        }
+        return url;
+    }
+
+    private static String buildH2Url() {
+//        return "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL";
+        return "jdbc:h2:file:./.h2/test;DATABASE_TO_UPPER=false;MODE=MYSQL";
+    }
+
+    public static DataSource getMysqlDefaultDataSource() {
+        Optional<DataSourceConfig> config = DataSourceConfigLoader.getMysqlDefaultDataSourceConfig();
+        return config.map(DataSourcePool::getMysqlDataSource).orElse(null);
+    }
+
+    public static List<String> getSqlFileList(String sqlPath) {
+        try {
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            URL url = loader.getResource(sqlPath);
+            String path = url.getPath();
+            File[] files = new File(path).listFiles();
+            if (files == null) {
+                log.info("no sql file found!");
+                return new ArrayList<>();
+            }
+            Arrays.stream(files).forEach(it -> {
+                log.info("sql file: {}", it.getName());
+            });
+            return Arrays.stream(files)
+                    .map(ResourceLoader::getResource)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .flatMap(it -> Arrays.stream(it.split(";")))
+                    .filter(it->!StringUtils.isBlank(it))
+                    .collect(Collectors.toList());
+        } catch (Exception ex) {
+            log.error("getSqlFileList error: {}", ex);
+            return new ArrayList<>();
+        }
+    }
+
+    private static void prepareH2Tables(DataSource dataSource) {
+        try {
+            List<String> sqlContentList = getSqlFileList("db/migration");
+            log.info("sql: {}", sqlContentList);
+            Connection connection = dataSource.getConnection();
+            sqlContentList.stream().forEach(it-> {
+                try {
+                    connection.prepareStatement(it).execute();
+                } catch (Exception ex) {
+                    log.error("prepare h2 table error: {}", ex);
+                }
+            });
+        } catch (Exception ex) {
+            log.error("prepareH2Tables error: {}", ex);
+        }
+    }
+
+    public static DataSource getH2DataSource() {
+        if (h2Instance != null) {
+            return h2Instance;
+        }
+
+        synchronized (JooqContext.class) {
+            if (h2Instance == null) {
+                h2Instance = buildH2DataSource();
+            }
+        }
+        return h2Instance;
+    }
+
+    public static DataSource getMysqlDataSource(DataSourceConfig dataSourceConfig) {
+        if (mySqlInstance != null) {
+            return mySqlInstance;
+        }
+
+        synchronized (JooqContext.class) {
+            if (mySqlInstance == null) {
+                mySqlInstance = buildMysqlDataSource(dataSourceConfig);
+            }
+        }
+        return mySqlInstance;
+    }
+
+    public static DataSource buildH2DataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(buildH2Url());
+        config.setUsername("sa");
+        config.setPassword("");
+        config.setDriverClassName("org.h2.Driver");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        DataSource dataSource = new HikariDataSource(config);
+        prepareH2Tables(dataSource);
+        return dataSource;
+    }
+
+    public static DataSource buildMysqlDataSource(DataSourceConfig dataSourceConfig) {
+        HikariConfig config = new HikariConfig();
+        String jdbcUrl = buildMysqlUrl(
+                dataSourceConfig.getHost(),
+                dataSourceConfig.getPort(),
+                dataSourceConfig.getDatabase(),
+                dataSourceConfig.getUrlConfig());
+
+        config.setJdbcUrl(jdbcUrl);
+        config.setUsername(dataSourceConfig.getUsername());
+        config.setPassword(dataSourceConfig.getPassword());
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+        return new HikariDataSource(config);
+    }
+}

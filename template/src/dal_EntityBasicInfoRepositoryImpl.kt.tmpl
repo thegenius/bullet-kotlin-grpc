@@ -1,0 +1,15 @@
+package {{context.group}}.{{context.project}}.dal.impl
+
+import org.jooq.DSLContext
+import {{context.group}}.{{context.project}}.dal.generated.Tables
+import {{context.group}}.{{context.project}}.dal.EntityBasicInfoRepository
+import {{context.group}}.{{context.project}}.dal.generated.tables.pojos.EntityBasicInfo
+
+class EntityBasicInfoRepositoryImpl(private val context: DSLContext) : EntityBasicInfoRepository {
+    override fun fetchOneById(id: Long): EntityBasicInfo {
+        return context.selectFrom(Tables.ENTITY_BASIC_INFO)
+            .where(Tables.ENTITY_BASIC_INFO.ID.eq(id))
+            .fetchOne()
+            .into(EntityBasicInfo::class.java)
+    }
+}

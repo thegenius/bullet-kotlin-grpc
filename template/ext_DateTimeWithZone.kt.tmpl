@@ -1,0 +1,96 @@
+package {{context.group}}.{{context.project}}.ext
+
+import java.time.*
+
+class DateTimeWithZone {
+    /** 时间的毫秒表示  */
+    private var datetime: Long
+
+    /** 时区偏移的秒表示 */
+    private var zone: Int
+
+    val timeMillis: Long
+        get() = this.datetime
+
+    val timeOffsetMillis: Int
+        get() = this.zone * 1000
+
+    val zoneOffset: ZoneOffset
+        get() = ZoneOffset.ofTotalSeconds(this.zone)
+
+    constructor() {
+        val offsetDateTime = OffsetDateTime.now()
+        val localDateTime = offsetDateTime.toLocalDateTime()
+        val zoneOffset = offsetDateTime.offset
+        this.datetime = localDateTime.toInstant(zoneOffset).toEpochMilli()
+        this.zone = zoneOffset.totalSeconds
+    }
+
+    constructor(datetime: Long, zone: Int) {
+        this.datetime = datetime
+        this.zone = zone
+    }
+
+
+    /**
+     * @return OffsetDateTime格式的时间
+     */
+    fun toOffsetDateTime(): OffsetDateTime {
+        return toOffsetDateTime(this)
+    }
+
+    /**
+     * @return ZonedDateTime格式的时间
+     */
+    fun toZonedDateTime(): ZonedDateTime {
+        return toZoneDateTime(this)
+    }
+
+    companion object {
+
+        /**
+         * 返回当前时间和时区
+         * @return DateTimeWithZone格式的当前时间和时区
+         */
+        @JvmStatic
+        fun now(): DateTimeWithZone {
+            return DateTimeWithZone()
+        }
+
+        /**
+         *
+         * @param datetime 时间的毫秒表示
+         * @param zone 时区偏移的毫秒表示
+         * @return DateTimeWithZone格式的当前时间和时区
+         */
+        @JvmStatic
+        fun of(datetime: Long, zone: Int): DateTimeWithZone {
+            return DateTimeWithZone(datetime, zone)
+        }
+
+        /**
+         * 转化为OffsetDateTime
+         * @param dateTimeWithZone
+         * @return OffsetDateTime格式的时间
+         */
+        @JvmStatic
+        fun toOffsetDateTime(dateTimeWithZone: DateTimeWithZone): OffsetDateTime {
+            val zoneOffset = ZoneOffset.ofTotalSeconds(dateTimeWithZone.zone)
+            val zoneId = ZoneId.ofOffset("UTC", zoneOffset)
+            val instant = Instant.ofEpochMilli(dateTimeWithZone.datetime)
+            return OffsetDateTime.ofInstant(instant, zoneId)
+        }
+
+        /**
+         * @param dateTimeWithZone
+         * @return ZonedDateTime格式的时间
+         */
+        @JvmStatic
+        fun toZoneDateTime(dateTimeWithZone: DateTimeWithZone): ZonedDateTime {
+            val zoneOffset = ZoneOffset.ofTotalSeconds(dateTimeWithZone.zone)
+            val zoneId = ZoneId.ofOffset("UTC", zoneOffset)
+            val instant = Instant.ofEpochMilli(dateTimeWithZone.datetime)
+            return ZonedDateTime.ofInstant(instant, zoneId)
+        }
+    }
+}

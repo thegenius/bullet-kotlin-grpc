@@ -1,0 +1,12 @@
+.idea
+.gradle
+.DS_STORE
+.kotlintest
+.h2
+*.iml
+out
+build
+api/build
+api/out
+env/database/build
+env/database/out

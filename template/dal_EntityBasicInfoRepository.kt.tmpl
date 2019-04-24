@@ -1,0 +1,7 @@
+package {{context.group}}.{{context.project}}.dal
+
+import {{context.group}}.{{context.project}}.dal.generated.tables.pojos.EntityBasicInfo;
+
+interface EntityBasicInfoRepository {
+    fun fetchOneById(id: Long): EntityBasicInfo
+}

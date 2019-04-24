@@ -1,0 +1,58 @@
+package {{context.group}}.{{context.project}}.api.impl
+
+import io.grpc.examples.helloworld.GreeterCoroutineGrpc
+import io.grpc.examples.helloworld.HelloReply
+import io.grpc.examples.helloworld.HelloRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asContextElement
+import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.toList
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import kotlin.coroutines.CoroutineContext
+
+class GreeterServiceImpl : GreeterCoroutineGrpc.GreeterImplBase() {
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(GreeterServiceImpl::class.java)
+    }
+    val myThreadLocal = ThreadLocal.withInitial { "value" }.asContextElement()
+
+    override val initialContext: CoroutineContext
+        get() = Dispatchers.Default + myThreadLocal
+
+
+    private val validNameRegex = Regex("[^0-9]*")
+
+    override suspend fun sayHello(request: HelloRequest): HelloReply  {
+            log.info("say hello {}", request)
+            return HelloReply.newBuilder()
+                .setMessage("Hello there, ${request.name}!")
+                .build()
+    }
+
+    override suspend fun sayHelloStreaming(requestChannel: ReceiveChannel<HelloRequest>, responseChannel: SendChannel<HelloReply>) {
+        requestChannel.consumeEach { request ->
+            responseChannel
+                .send { message = "Hello there, ${request.name}!" }
+        }
+    }
+
+    override suspend fun sayHelloClientStreaming(
+        requestChannel: ReceiveChannel<HelloRequest>
+    ): HelloReply {
+        return HelloReply.newBuilder()
+            .setMessage(requestChannel.toList().map { it.name }.joinToString(separator = "|") )
+            .build()
+    }
+
+    override suspend fun sayHelloServerStreaming(request: HelloRequest, responseChannel: SendChannel<HelloReply>) {
+
+        for(char in request.name) {
+            responseChannel.send {
+                message = "Hello $char!"
+            }
+        }
+    }
+}

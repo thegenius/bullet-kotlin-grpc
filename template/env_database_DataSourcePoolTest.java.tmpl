@@ -1,0 +1,17 @@
+package {{context.group}}.{{context.project}}.dal;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+
+public class DataSourcePoolTest {
+
+    @Test
+    public void testConnection() throws Exception {
+        DataSource dataSource = DataSourcePool.getMysqlDefaultDataSource();
+        Connection connection = dataSource.getConnection();
+        Assert.assertNotNull(connection);
+    }
+}
