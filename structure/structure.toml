@@ -51,7 +51,13 @@ project_structure = [
     {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}",          item_file = "main.kt",                          item_tmpl = "main.kt.tmpl",                 item_type = "static"},
     {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}",          item_file = "KoinTestRunner.kt",                item_tmpl = "KoinTestRunner.kt.tmpl",       item_type = "static"},
     
- 
+    # spec
+    {item_path = "{{ context.project }}.spec",    item_file = "ghz.exe",            item_tmpl = "ghz.exe",         item_type = "static"},
+    {item_path = "{{ context.project }}.spec",    item_file = "request.json",       item_tmpl = "request.json",    item_type = "static"},
+    {item_path = "{{ context.project }}.spec",    item_file = "run-ghz.bat",        item_tmpl = "run-ghz.bat",     item_type = "static"},
+    {item_path = "{{ context.project }}.spec",    item_file = "run-ghz.sh",         item_tmpl = "run-ghz.sh",      item_type = "static"},
+    
+
     # root
     {item_path = "{{ context.project }}.gradle.wrapper",    item_file = "gradle-wrapper.properties",            item_tmpl = "gradle-wrapper.properties.tmpl",             item_type = "static"},
     {item_path = "{{ context.project }}",    item_file = ".gitignore",            item_tmpl = ".gitignore",             item_type = "static"},
