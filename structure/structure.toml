@@ -47,9 +47,11 @@ project_structure = [
     {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "JsonUtil.kt",                      item_tmpl = "ext_JsonUtil.kt.tmpl",         item_type = "static"},
     {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "SnowFlake.kt",                     item_tmpl = "ext_SnowFlake.kt.tmpl",        item_type = "static"},
     {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}.ext",      item_file = "YamlUtil.kt",                      item_tmpl = "ext_YamlUtil.kt.tmpl",         item_type = "static"},
-    
     {item_path = "{{ context.project }}.src.main.kotlin.{{context.group}}.{{context.project}}",          item_file = "main.kt",                          item_tmpl = "main.kt.tmpl",                 item_type = "static"},
-    {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}",          item_file = "KoinTestRunner.kt",                item_tmpl = "KoinTestRunner.kt.tmpl",       item_type = "static"},
+
+    {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}",          item_file = "KoinTestRunner.kt",                item_tmpl = "KoinTestRunner.kt.tmpl",                    item_type = "static"},
+    {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}.api",      item_file = "GreeterServiceSpec.kt",            item_tmpl = "api_GreeterServiceSpec.kt.tmpl",            item_type = "static"},
+    {item_path = "{{ context.project }}.src.test.kotlin.{{context.group}}.{{context.project}}.dal",      item_file = "EntityBasicInfoRepositorySpec.kt", item_tmpl = "dal_EntityBasicInfoRepositorySpec.kt.tmpl", item_type = "static"},
     
     # spec
     {item_path = "{{ context.project }}.spec",    item_file = "ghz.exe",            item_tmpl = "ghz.exe",         item_type = "static"},
